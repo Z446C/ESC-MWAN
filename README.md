@@ -62,7 +62,8 @@ logmaxsize=256
 ```
 2. 拷贝项目到/root，确认脚本所在位置为/root/ESC-MWAN/ESC-MWAN.sh
 3. 配置两个wan口网络
-4. 配置mwan3，进去op系统后台，找到**网络->负载均衡**进行配置
+4. 配置mwan3，进去op系统后台，找到**网络->负载均衡**进行配置，
+>不会配置？[使用MWAN3进行多线叠加详细教程](https://www.right.com.cn/forum/thread-147109-1-1.html)
 
 
 ### 执行脚本
@@ -71,15 +72,26 @@ logmaxsize=256
 chmod 755 /root/ESC-MWAN/ESC-MWAN.sh
 /root/ESC-MWAN/ESC-MWAN.sh login
 ```
-2. 查看ESC-MWAN.log（成功登录两个wan口的话可以进行下一步）
+2. 查看ESC-MWAN.log（查看是否成功登录两个wan口）
 ```shell
 cat /root/ESC-MWAN/ESC-MWAN.log
+```
+3. 对于用户自定义函数，可以通过myFunc参数来调用
+```shell
+# 先编写myFun函数
+myFunc(){
+	echo "HELLO ESC-MWAN!"
+}
+```
+```shell
+# 执行
+/root/ESC-MWAN/ESC-MWAN.sh myFunc
 ```
 
 
 ### 使用的建议
-- 由于mwan3会每隔一段事件对wan口进行跟踪检测在线情况，所以基本很稳定，不会出现经常掉线。
-- 为了稳定性，可以在mwan3的通知（Motification）那里增加以下代码，目的是检测到有掉线的话，就会触发$Action然后执行重新登录
+- 由于mwan3会每隔一段事件对wan口进行跟踪检测在线情况，所以基本很稳定，基本不会出现经常掉线。
+- 为了稳定性，可以在mwan3的通知（Motification）那里增加以下代码，检测到有掉线的话，就会触发$ACTION然后执行重新登录
 ```shell
 # 断线事件
 case "$ACTION" in
@@ -100,6 +112,28 @@ case "$ACTION" in
 		/root/ESC-MWAN/ESC-MWAN.sh login
 	;;
 esac
+```
+- 在工作日早上恢复网络后，定时重启路由器或重启wan口, 以刷新网络状态
+```shell
+# 编辑源码的myFunc函数
+myFunc(){
+	echo "HELLO ESC-MWAN!"
+	# 注销
+	echo "执行myFunc注销中" >> /root/ESC-MWAN/ESC-MWAN.log
+	/root/ESC-MWAN/ESC-MWAN.sh logout
+	sleep 2
+	# 重启wan/wan2
+	echo "执行myFunc重启wan/wan2中" >> /root/ESC-MWAN/ESC-MWAN.log
+	# ifup使用的参数是逻辑名称wan/wan2(和代码的device是不一样的，要去/etc/config/network查看interface)
+	ifup wan  
+	ifup wan2
+	sleep 2
+}
+```
+```shell
+# 编辑crontab文件内容
+# 每天6:05执行
+5 6 * * * /bin/sh /root/ESC-MWAN/ESC-MWAN.sh login myFunc
 ```
 
 ## 参考项目
