@@ -377,7 +377,7 @@ logout(){
 # (help)
 help(){
 	echo "=================================== 帮助 ==================================="
-	echo "usge: ESC-Z_mwan.sh <login|logout|myfunc> [Device]"
+	echo "usge: ESC-Z_mwan.sh <login|logout|myFunc> [Device]"
 	echo "注意：可选参数[Device]表示设备接口名称（通过ifconfig查看），用于登录/注销指定的设备接口，不填写默认登录/注销两个设备接口。"
 	echo "对于用户自定义函数，可以通过myFunc参数来调用"
 }
