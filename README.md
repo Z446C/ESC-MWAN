@@ -133,7 +133,7 @@ myFunc(){
 ```shell
 # 编辑crontab文件内容
 # 每天6:05执行
-5 6 * * * /bin/sh /root/ESC-MWAN/ESC-MWAN.sh login myFunc
+5 6 * * * /bin/sh /root/ESC-MWAN/ESC-MWAN.sh myFunc
 ```
 
 ## 参考项目
