@@ -80,12 +80,22 @@ cat /root/ESC-MWAN/ESC-MWAN.log
 ```shell
 # 先编写myFun函数
 myFunc(){
-	echo "HELLO ESC-MWAN!"
+	case $1 in
+		test)
+			echo "HELLO ESC-MWAN!"
+			;;
+		start)
+			;;
+		stop)
+			;;
+		restart)
+			;;
+	esac
 }
 ```
 ```shell
 # 执行
-/root/ESC-MWAN/ESC-MWAN.sh myFunc
+/root/ESC-MWAN/ESC-MWAN.sh myFunc test/start/stop/restart
 ```
 
 
@@ -117,23 +127,49 @@ esac
 ```shell
 # 编辑源码的myFunc函数
 myFunc(){
-	echo "HELLO ESC-MWAN!"
-	# 注销
-	echo "执行myFunc注销中" >> /root/ESC-MWAN/ESC-MWAN.log
-	/root/ESC-MWAN/ESC-MWAN.sh logout
-	sleep 2
-	# 重启wan/wan2
-	echo "执行myFunc重启wan/wan2中" >> /root/ESC-MWAN/ESC-MWAN.log
-	# ifup使用的参数是逻辑名称wan/wan2(和代码的device是不一样的，要去/etc/config/network查看interface)
-	ifup wan  
-	ifup wan2
-	sleep 2
+	case $1 in
+		test)
+			echo "HELLO ESC-MWAN!"
+			;;
+		login)
+			echo "$time - 状态:执行myFunc登录中" >> /root/ESC-MWAN/ESC-MWAN.log
+			/root/ESC-MWAN/ESC-MWAN.sh login
+			sleep 1
+			;;
+		logout)
+			echo "$time - 状态:执行myFunc注销中" >> /root/ESC-MWAN/ESC-MWAN.log
+			/root/ESC-MWAN/ESC-MWAN.sh logout
+			sleep 1
+			;;
+		start)
+			echo "$time - 状态:执行myFunc启动mwan3中" >> /root/ESC-MWAN/ESC-MWAN.log
+			/etc/init.d/mwan3 start
+			sleep 1
+			;;
+		stop)
+			echo "$time - 状态:执行myFunc关闭mwan3中" >> /root/ESC-MWAN/ESC-MWAN.log
+			/etc/init.d/mwan3 stop
+			sleep 1
+			;;
+		restart)
+			echo "$time - 状态:执行myFunc重启wan/wan2中" >> /root/ESC-MWAN/ESC-MWAN.log
+			# ifup使用的参数是逻辑名称wan/wan2(和代码的device是不一样的，要去/etc/config/network查看interface)
+			ifup wan
+			ifup wan2
+			sleep 2
+			echo "$time - 状态:执行myFunc登录中" >> /root/ESC-MWAN/ESC-MWAN.log
+			/root/ESC-MWAN/ESC-MWAN.sh login
+			sleep 1
+			;;
+	esac
 }
 ```
 ```shell
 # 编辑crontab文件内容
-# 每天6:05执行
-5 6 * * * /bin/sh /root/ESC-MWAN/ESC-MWAN.sh myFunc
+# 周一到周五，每天6:05执行一次
+5 6 * * 1,2,3,4,5 /bin/sh /root/ESC-MWAN/ESC-MWAN.sh myFunc restart
+# 周日到周四，每天23:28执行一次
+28 23 * * 1,2,3,4,7 /bin/sh /root/ESC-MWAN/ESC-MWAN.sh myFunc stop
 ```
 
 ## 参考项目
