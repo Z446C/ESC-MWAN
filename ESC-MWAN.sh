@@ -56,7 +56,7 @@ myFunc(){
 # (createLog)
 createLog(){
 	if [[ "$path" == "" ]]; then
-		path="/root/ESC-Z/ESC-Z.log"
+		path="/root/ESC-MWAN/ESC-MWAN.log"
 	fi
 
 	if [ -f "$path" ]; then
