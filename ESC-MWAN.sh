@@ -37,19 +37,19 @@ clientip=""
 redirecturl1="172.17.18.3:8080"
 redirecturl2="enet.10000.gd.cn:10001"
 #################################################################################################################
-# 自定义函数体(用于用户自定义脚本，通过参数来调用)
+# 自定义函数体(用于用户自定义脚本，通过参数来调用)例如：./ESC-MWAN.sh myFunc test
 myFunc(){
-	echo "HELLO ESC-MWAN!"
-	# # 注销
-	# echo "$time - 执行myFunc注销中" >> /root/ESC-MWAN/ESC-MWAN.log
-	# /root/ESC-MWAN/ESC-MWAN.sh logout
-	# sleep 2
-	# # 重启wan/wan2
-	# echo "$time - 执行myFunc重启wan/wan2中" >> /root/ESC-MWAN/ESC-MWAN.log
-	# # ifup使用的参数是逻辑名称wan/wan2(和代码的device是不一样的，要去/etc/config/network查看interface)
-	# ifup wan  
-	# ifup wan2
-	# sleep 2
+	case $1 in
+		test)
+			echo "HELLO ESC-MWAN!"
+			;;
+		start)
+			;;
+		stop)
+			;;
+		restart)
+			;;
+	esac
 }
 
 # 创建日志文件
@@ -448,7 +448,7 @@ case $1 in
 	    main logout $2
 	    ;;
 	myFunc)
-		myFunc
+		myFunc $2
 		;;
 	*)
 	    help
@@ -457,7 +457,3 @@ esac
 
 echo "退出中..." >> $path
 exit 1
-
-
-
-
