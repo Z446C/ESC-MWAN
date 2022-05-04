@@ -78,7 +78,7 @@ cat /root/ESC-MWAN/ESC-MWAN.log
 ```
 3. 对于用户自定义函数，可以通过myFunc参数来调用
 ```shell
-# 先编写myFun函数
+# 先编写myFunc函数
 myFunc(){
 	case $1 in
 		test)
@@ -95,7 +95,7 @@ myFunc(){
 ```
 ```shell
 # 执行
-/root/ESC-MWAN/ESC-MWAN.sh myFunc test/start/stop/restart
+/root/ESC-MWAN/ESC-MWAN.sh myFunc test|start|stop|restart
 ```
 
 
