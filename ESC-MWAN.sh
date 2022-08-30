@@ -1,6 +1,9 @@
 #!/bin/sh
 #####################################################################################################################
 # 作者 @Otm-Z 创建于2022/03/27
+# 版本：1.0.2
+# 更新时间：2022/08/30
+# 更新内容：解决获取响应数据时结尾出现\r\n控制符导致字符串匹配失败的问题
 # 实现环境：openwrt
 # 必备工具包：curl、mwan3
 # 非必备工具包：coreutils-base64 —— 用于密码编码，可以不安装，自行去编码，再把结果填入pwd64中，默认留空自动编码（需安装工具包）
@@ -9,8 +12,8 @@
 username=""
 passwd=""
 # device通过`ifconfig`查看,名称就是最左侧
-device1=""
-device2=""
+device1="wan"
+device2="lan2"
 ################################
 # 建议填写，一劳永逸
 # base64编码过的密码（建议自行编码，节省内存，默认留空自动编码（需安装工具包）
@@ -19,7 +22,7 @@ pwd64=""
 nasip=""
 # 学校代号,建议手动填写，节省访问资源（wyu默认填1414）
 schoolid=""
-# 日志路径、文件大小(kB)，注意路径
+# 日志路径、日志文件大小(kB)
 path="/root/ESC-MWAN/ESC-MWAN.log"
 logmaxsize=256
 ################################
@@ -64,7 +67,7 @@ createLog(){
 		local maxsize=$((1024*$logmaxsize))
 		if [ $size -ge $maxsize ]; then
 			echo "$time - 状态:正在删除旧的记录..." >> $path
-			#取后3000行内容重定向到另外一个临时文件中
+			# 只保留取后3000行内容
 			tail -n 3000 ESC-Z.log > ESC-Z.log.tmp
 			rm -f ESC-Z.log
 			mv ESC-Z.log.tmp ESC-Z.log
@@ -110,15 +113,15 @@ getIP(){
 	fi
 
 	if [[ "$clientip" == "" ]]; then
-	        clientip=`echo -n $tmp2 | cut -d '=' -f2`
+	        clientip=`echo -n $tmp2 | cut -d '=' -f2 | tr -d '\r' | tr -d '\n'`
 	else
-	        clientip=`echo -n $tmp1 | cut -d '=' -f2`
+	        clientip=`echo -n $tmp1 | cut -d '=' -f2 | tr -d '\r' | tr -d '\n'`
 	fi
 
 	if [[ "$nasip" == "" ]]; then
-	        nasip=`echo -n $tmp1 | cut -d '=' -f2`
+	        nasip=`echo -n $tmp1 | cut -d '=' -f2 | tr -d '\r' | tr -d '\n'`
 	else
-	        nasip=`echo -n $tmp2 | cut -d '=' -f2`
+	        nasip=`echo -n $tmp2 | cut -d '=' -f2 | tr -d '\r' | tr -d '\n'`
 	fi
 }
 
@@ -129,8 +132,8 @@ getMAC(){
 }
 
 # 获取本地IP地址
-# (getIP2)
-getIP2(){
+# (getLocalIP)
+getLocalIP(){
 	clientip=`ifconfig $interf |grep "inet addr" |awk '{print $2}' |tr -d "addr:"`
 }
 
@@ -139,16 +142,16 @@ getIP2(){
 getUrlStatus(){
 	if [[ "$2" == "location" ]]; then
 		#获取重定向地址
-		echo `curl $1 -H "$useragent" --interface "$interf" -I -G -s | grep "Location" | awk '{print $2}'`
+		echo `curl $1 -H "$useragent" --interface "$interf" -I -G -s | grep "Location" | awk '{print $2}' | tr -d '\r' | tr -d '\n'`
 	elif [[ "$2" == "code" ]]; then
 		#获取状态码
-		echo `curl $1 -H "$useragent" --interface "$interf" -I -G -s | grep "HTTP" | awk '{print $2}'`
+		echo `curl $1 -H "$useragent" --interface "$interf" -I -G -s | grep "HTTP" | awk '{print $2}' | tr -d '\r' | tr -d '\n'`
 	fi
 }
 
-# 保活
-# (keepAlive)
-keepAlive(){
+# 网络检测
+# (networkCheck)
+networkCheck(){
 	local url1="http://qq.com"
 	local url2="http://www.bing.com"
 	Location=`getUrlStatus $url1 location`
@@ -274,14 +277,14 @@ login(){
 	interf=$1
 	echo "正在登录${interf}，请稍后..."
 
-	# 保活检测
-	local alivestatus=`keepAlive`
-	if [[ "$alivestatus" == "OK" ]]; then
+	# 网络检测，若可以连接外网则退出
+	local networkStatus=`networkCheck`
+	if [[ "$networkStatus" == "OK" ]]; then
 		echo "网络正常！"
 		echo "网络正常！" >> $path
 		return
 	fi
-	# 检查网络状态
+	# 开始登陆
 	local url="http://www.qq.com/"
 	local urlcode=`getUrlStatus $url code`
 	local urllocation=`getUrlStatus $url location`
@@ -318,7 +321,7 @@ login(){
 			if [ $clientip ]; then
 				getMAC
 			else
-				getIP2
+				getLocalIP
 				getMAC
 			fi
 			echo "MAC:$mac" >> $path
@@ -353,6 +356,7 @@ login(){
 			echo "获取重定向地址失败，获取的重定向地址不是http://172.17.18.3:8080/和http://enet.10000.gd.cn:10001/" >> $path
 		fi
 	else
+		echo "登录失败。（多次失败请重启wan口刷新ip）"
 		echo "登录失败。（多次失败请重启wan口刷新ip）" >> $path
 		return
 	fi
@@ -364,7 +368,7 @@ login(){
 logout(){
 	echo "$time - 状态：注销函数" >> $path
 	interf=$1
-	getIP2
+	getLocalIP
 	# 注销
 	echo "正在注销${interf}，请稍后..."
 	echo "注销IP为:${clientip}" >> $path
@@ -377,7 +381,7 @@ logout(){
 # (help)
 help(){
 	echo "=================================== 帮助 ==================================="
-	echo "usge: ESC-Z_mwan.sh <login|logout|myFunc> [Device]"
+	echo "usge: ESC-Z_MWAN.sh <login|logout|myFunc> [Device]"
 	echo "注意：可选参数[Device]表示设备接口名称（通过ifconfig查看），用于登录/注销指定的设备接口，不填写默认登录/注销两个设备接口。"
 	echo "对于用户自定义函数，可以通过myFunc参数来调用"
 }
@@ -455,5 +459,5 @@ case $1 in
 	    ;;
 esac
 
-echo "退出中..." >> $path
+echo "退出中..."
 exit 1

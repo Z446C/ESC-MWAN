@@ -3,14 +3,14 @@
 
 ---
 
+## 更新 2022/08/30
+1. 解决获取响应数据时结尾出现\r\n控制符导致字符串匹配失败的问题
+
 ## 脚本说明
-> 注意：
-> 1. 需要一个校园网账号可使用多个（两个以上）的终端上网，就可以进行带宽叠加。
-> 2. 本项目只做两个wan口的登录/注销，两个以上可以自行修改源码。
-> 3. 主要是针对openwrt系统，因为有mwan3插件。
 - 这是 [ESC For Shell](https://github.com/Z446C/ESC-Z) 的多wan版本，可实现带宽叠加
-- 使用shell轻量脚本
-- 支持openwrt系统
+- 需要一个校园网账号可使用多个（两个以上）的终端上网，就可以进行带宽叠加。
+- 本项目只做两个wan口的登录/注销，两个以上可以自行修改源码，主要是针对openwrt系统，因为有mwan3插件。
+
 
 ### 基本功能
 - 自动登录/注销账号（可指定wan口或默认全部wan口）
@@ -78,7 +78,7 @@ cat /root/ESC-MWAN/ESC-MWAN.log
 ```
 3. 对于用户自定义函数，可以通过myFunc参数来调用
 ```shell
-# 先编写myFunc函数
+# 先编写myFun函数
 myFunc(){
 	case $1 in
 		test)
@@ -95,7 +95,7 @@ myFunc(){
 ```
 ```shell
 # 执行
-/root/ESC-MWAN/ESC-MWAN.sh myFunc test|start|stop|restart
+/root/ESC-MWAN/ESC-MWAN.sh myFunc test/start/stop/restart
 ```
 
 
