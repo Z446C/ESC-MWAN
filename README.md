@@ -29,12 +29,12 @@
 
 **安装命令**
 ```shell
-opkg update #更新安装包
-opkg install curl
-opkg install coreutils-base64 # base64编码包
-opkg install mwan3 #负载均衡
-opkg install luci-app-mwan3 #mwan3的openwrt界面
-luci-i18n-mwan3-zh-cn #mwan3的openwrt界面中文包
+opkg update                    # 更新安装包
+opkg install curl              # 请求Web服务器
+opkg install coreutils-base64  # base64编码包
+opkg install mwan3             # 负载均衡
+opkg install luci-app-mwan3    # mwan3的openwrt界面
+luci-i18n-mwan3-zh-cn          # mwan3的openwrt界面中文包
 ```
 
 
@@ -95,7 +95,7 @@ myFunc(){
 ```
 ```shell
 # 执行
-/root/ESC-MWAN/ESC-MWAN.sh myFunc test/start/stop/restart
+/root/ESC-MWAN/ESC-MWAN.sh myFunc <test|start|stop|restart>
 ```
 
 
