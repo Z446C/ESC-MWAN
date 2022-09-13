@@ -63,7 +63,7 @@ logmaxsize=256
 2. 拷贝项目到/root，确认脚本所在位置为/root/ESC-MWAN/ESC-MWAN.sh
 3. 配置两个wan口网络
 4. 配置mwan3，进去op系统后台，找到**网络->负载均衡**进行配置，
->不会配置？[使用MWAN3进行多线叠加详细教程](https://www.right.com.cn/forum/thread-147109-1-1.html)
+>不会配置？~~[使用MWAN3进行多线叠加详细教程](https://www.right.com.cn/forum/thread-147109-1-1.html)~~
 
 
 ### 执行脚本
