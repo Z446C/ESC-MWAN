@@ -1,5 +1,6 @@
 # ESC For Shell - MWAN
 基于[ESC For Shell](https://github.com/Z446C/ESC-Z)在openwrt上多线带宽叠加的实现
+[【Openwrt】ESC-MWAN 不完全手册](https://github.com/Z446C/ESC-MWAN/blob/master/%E3%80%90Openwrt%E3%80%91ESC-MWAN%20%E4%B8%8D%E5%AE%8C%E5%85%A8%E6%89%8B%E5%86%8C.md)
 
 ---
 
@@ -175,10 +176,8 @@ myFunc(){
 ## 参考项目
 https://github.com/Z446C/ESC-Z
 
-
 ## 开源协议
 [GPL-3.0](https://github.com/Z446C/ESC-MWAN/blob/master/LICENSE)
-
 
 ## 声明
 
@@ -187,7 +186,6 @@ https://github.com/Z446C/ESC-Z
 
 ## 反馈
 提issue或者Q群(729672645)
-
 
 ## 结语
 由于本人即将毕业，故无法继续更新脚本。听说学校也会加大算法更新力度，有生意头脑的同学想借此长久赚钱是不可取的。本项目已开源，有兴趣的可以fork项目进行研究，原理并不难。留了Q群提供交流，多看看参考的项目，我也是自己看代码知道原理的。
